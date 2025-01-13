@@ -8,6 +8,8 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
 
     # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
     permissions:
