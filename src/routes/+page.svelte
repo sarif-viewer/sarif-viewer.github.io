@@ -1,14 +1,14 @@
 <script lang="ts">
-	import { AlertTriangle, CheckCircle, XCircle, Info, Upload } from "lucide-svelte";
-	import CodeSnippet from "$lib/components/CodeSnippet.svelte"
-	import { fade, slide } from "svelte/transition";
+	import { AlertTriangle, CheckCircle, XCircle, Info, Upload } from 'lucide-svelte';
+	import CodeSnippet from '$lib/components/CodeSnippet.svelte';
+	import { fade, slide } from 'svelte/transition';
 	import type { Log, Result, Tool } from 'sarif';
 
 	// Create state for results and loading state
 	let results: Result[] = $state([]);
 	let tool: Tool = [];
 	let isLoading: boolean = $state(false);
-	let error: string = $state("");
+	let error: string = $state('');
 
 	/** Handle file upload and parse SARIF */
 	const handleFileUpload = async (event: Event) => {
@@ -18,9 +18,8 @@
 		if (!file) return;
 
 		// Reset states
-		error = "";
+		error = '';
 		isLoading = true;
-
 
 		const fileContent = await file.text();
 		const sarifData: Log = JSON.parse(fileContent);
@@ -32,11 +31,11 @@
 	// Get severity icon based on level
 	const getSeverityIcon = (level: Result.level | undefined) => {
 		switch (level) {
-			case "error":
+			case 'error':
 				return XCircle;
-			case "warning":
+			case 'warning':
 				return AlertTriangle;
-			case "note":
+			case 'note':
 				return Info;
 			default:
 				return CheckCircle;
@@ -46,14 +45,14 @@
 	// Get severity color based on level
 	const getSeverityColor = (level: Result.level | undefined) => {
 		switch (level) {
-			case "error":
-				return "text-red-500";
-			case "warning":
-				return "text-yellow-500";
-			case "note":
-				return "text-blue-500";
+			case 'error':
+				return 'text-red-500';
+			case 'warning':
+				return 'text-yellow-500';
+			case 'note':
+				return 'text-blue-500';
 			default:
-				return "text-green-500";
+				return 'text-green-500';
 		}
 	};
 	function getLevel(result: Result) {
@@ -62,7 +61,7 @@
 		}
 		for (const rule of tool.driver.rules ?? []) {
 			if (rule.id == result.ruleId) {
-				return rule?.defaultConfiguration?.level ?? "none";
+				return rule?.defaultConfiguration?.level ?? 'none';
 			}
 		}
 	}
@@ -79,24 +78,38 @@
 		<!-- Upload Section -->
 		<div class="mb-8">
 			<label for="sarif-upload" class="block w-full cursor-pointer">
-				<span class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-8 text-center hover:border-slate-400 dark:hover:border-slate-600 transition-colors block">
+				<span
+					class="border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg p-8 text-center hover:border-slate-400 dark:hover:border-slate-600 transition-colors block"
+				>
 					<Upload class="mx-auto h-12 w-12 text-slate-400" />
-					<p class="mt-4 text-sm text-slate-600 dark:text-slate-400">Click to upload SARIF file or drag and drop</p>
+					<p class="mt-4 text-sm text-slate-600 dark:text-slate-400">
+						Click to upload SARIF file or drag and drop
+					</p>
 					<p class="mt-2 text-xs text-slate-500">.sarif or .json files</p>
 				</span>
-				<input id="sarif-upload" type="file" accept=".json,.sarif" onchange={handleFileUpload} class="hidden" />
+				<input
+					id="sarif-upload"
+					type="file"
+					accept=".json,.sarif"
+					onchange={handleFileUpload}
+					class="hidden"
+				/>
 			</label>
 
 			<!-- Error Message -->
 			{#if error}
-				<div class="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg">
+				<div
+					class="mt-4 p-4 bg-red-100 dark:bg-red-900/20 text-red-700 dark:text-red-400 rounded-lg"
+				>
 					{error}
 				</div>
 			{/if}
 
 			<!-- Loading State -->
 			{#if isLoading}
-				<div class="mt-4 text-center text-slate-600 dark:text-slate-400">Processing SARIF file...</div>
+				<div class="mt-4 text-center text-slate-600 dark:text-slate-400">
+					Processing SARIF file...
+				</div>
 			{/if}
 		</div>
 
@@ -114,7 +127,9 @@
 								<div>
 									<div class="flex items-center gap-2">
 										<span class="font-semibold">{result.ruleId}</span>
-										<span class={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(getLevel(result))} bg-opacity-10`}>
+										<span
+											class={`px-2 py-1 rounded-full text-xs font-medium ${getSeverityColor(getLevel(result))} bg-opacity-10`}
+										>
 											{getLevel(result)}
 										</span>
 									</div>
@@ -127,7 +142,10 @@
 										<div class="text-sm text-slate-500 dark:text-slate-400">
 											File: {location?.physicalLocation?.artifactLocation?.uri}
 										</div>
-										<CodeSnippet code={location?.physicalLocation?.region?.snippet?.text} line={location?.physicalLocation?.region?.startLine ?? 0} />
+										<CodeSnippet
+											code={location?.physicalLocation?.region?.snippet?.text}
+											line={location?.physicalLocation?.region?.startLine ?? 0}
+										/>
 									</div>
 								{/each}
 
@@ -136,16 +154,25 @@
 									<div class="mt-4 border-t border-slate-200 dark:border-slate-700 pt-4">
 										<h4 class="text-sm font-semibold mb-3">Code Flow</h4>
 										{#each result.codeFlows[0].threadFlows[0].locations as { location }, index}
-											<div class="pl-4 border-l-2 border-slate-300 dark:border-slate-700 mb-4 last:mb-0">
+											<div
+												class="pl-4 border-l-2 border-slate-300 dark:border-slate-700 mb-4 last:mb-0"
+											>
 												<div class="flex items-center gap-2 mb-2">
-													<span class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-xs font-medium">
+													<span
+														class="inline-flex items-center justify-center w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-700 text-xs font-medium"
+													>
 														{index + 1}
 													</span>
 													{#if location?.message}
-														<span class="text-sm text-slate-600 dark:text-slate-400">{location.message.text}</span>
+														<span class="text-sm text-slate-600 dark:text-slate-400"
+															>{location.message.text}</span
+														>
 													{/if}
 												</div>
-												<CodeSnippet code={location?.physicalLocation?.region?.snippet?.text} line={location?.physicalLocation?.region?.startLine} />
+												<CodeSnippet
+													code={location?.physicalLocation?.region?.snippet?.text}
+													line={location?.physicalLocation?.region?.startLine}
+												/>
 											</div>
 										{/each}
 									</div>
@@ -156,7 +183,9 @@
 				{/each}
 			</div>
 		{:else if !isLoading}
-			<div class="text-center text-slate-600 dark:text-slate-400 py-12" transition:fade>No results to display. Upload a SARIF file to begin.</div>
+			<div class="text-center text-slate-600 dark:text-slate-400 py-12" transition:fade>
+				No results to display. Upload a SARIF file to begin.
+			</div>
 		{/if}
 	</div>
 </main>
